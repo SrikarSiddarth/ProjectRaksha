@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<robot>
+
+  <!-- ros_control plugin -->
+  <gazebo>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>/laser_turret</robotNamespace>
+      <robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>
+      <legacyModeNS>true</legacyModeNS>
+    </plugin>
+  </gazebo>
+
+  <!-- Link1 -->
+  <gazebo reference="servo1">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="servo2">
+    <material>Gazebo/DarkGrey</material>
+  </gazebo>
+
+  <gazebo reference="laser">
+    <material>Gazebo/Black</material>
+    <sensor type="ray" name="laser">
+        <pose>0 0 0 0 ${PI*-0.5} 0</pose>
+        <visualize>true</visualize>
+        <update_rate>50</update_rate>
+        <ray>
+            <scan>
+                <horizontal>
+                    <samples>10</samples>
+                    <resolution>1</resolution>
+                    <min_angle>0.02</min_angle>
+                    <max_angle>0.02</max_angle>
+                </horizontal> 
+                <vertical>
+                    <samples>10</samples>
+                    <resolution>1</resolution>
+                    <min_angle>0.02</min_angle>
+                    <max_angle>0.02</max_angle>
+                </vertical>
+            </scan>
+            <range>
+                <min>0.01</min>
+                <max>100</max>
+                <resolution>1.0</resolution>
+            </range>
+        </ray>
+        <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
+            <gaussianNoise>0.005</gaussianNoise>
+            <alwaysON>true</alwaysON>
+            <updateRate>50</updateRate>
+            <topicName>laser</topicName>
+            <frameName>laser_distance</frameName>
+            <radiation>INFRARED</radiation>
+            <fov>0.2967</fov>
+        </plugin>
+
+    </sensor>
+  </gazebo>
+
+  
+
+  
+
+</robot>

@@ -1,0 +1,14 @@
+laser_turret:
+  joint_state_controller:
+    type: joint_state_controller/JointStateController
+    publish_rate: 50
+
+  servo_x_controller:
+    type: effort_controllers/JointPositionController
+    joint:  joint1
+    pid: {p: 100.0, i: 0.01, d: 500.0}
+
+  servo_y_controller:
+    type: effort_controllers/JointPositionController
+    joint:  joint2
+    pid:  {p: 100.0, i: 0.01, d: 10.0}
