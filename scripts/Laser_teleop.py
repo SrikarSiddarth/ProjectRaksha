@@ -24,8 +24,6 @@ Communications Failed
 """
 
 def getKey():
-	if os.name == 'nt':
-		return msvcrt.getch()
 
 	tty.setraw(sys.stdin.fileno())
 	rlist, _, _ = select.select([sys.stdin], [], [], 0.1)
@@ -37,9 +35,7 @@ def getKey():
 	return key
 
 if __name__ == '__main__':
-
-	if os.name != 'nt':
-		settings = termios.tcgetattr(sys.stdin)
+	settings = termios.tcgetattr(sys.stdin)
 
 
 	rospy.init_node('laser_turret_teleop')
@@ -78,5 +74,4 @@ if __name__ == '__main__':
 	except:
 		print(e)
 
-	if os.name != 'nt':
-		termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
+	termios.tcsetattr(sys.stdin, termios.TCSADRAIN, settings)
