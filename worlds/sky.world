@@ -29,7 +29,7 @@
 			<static>1</static>
 		    <!-- camera -->
  			<link name='camera_link'>
-				<pose>0 0 20 0 0 0</pose>
+				<pose>-10 0 15 0 -0.2 0</pose>
 				<inertial>
 					<mass>0.1</mass>
 					<inertia>
@@ -94,7 +94,7 @@
 	      <z_axis_force>0.0</z_axis_force>
 	      
 	      <x_origin>40.0</x_origin>
-	      <y_origin>100.0</y_origin>
+	      <y_origin>50.0</y_origin>
 	      <z_origin>20.0</z_origin>
 	      
 	      <random_range>0.5</random_range>

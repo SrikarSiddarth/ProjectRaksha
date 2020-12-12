@@ -3,10 +3,7 @@
 import rospy
 from std_msgs.msg import Float64
 import sys, select, os
-if os.name == 'nt':
-  import msvcrt
-else:
-  import tty, termios
+import tty, termios
 
 msg = """
 
