@@ -48,7 +48,7 @@
 						</box>
 					</geometry>
 				</visual>
-				<sensor type='camera' name='camera'>
+				<sensor type='depth' name='camera'>
 					<camera name='overhead_cam'>
 						<horizontal_fov>2.0</horizontal_fov>
 						<image>
@@ -61,15 +61,40 @@
 						</clip>
 
 					</camera>
+
+					<plugin name="camera_plugin" filename="libgazebo_ros_openni_kinect.so">
+			          <baseline>0.2</baseline>
+			          <alwaysOn>true</alwaysOn>
+			          <updateRate>0.0</updateRate>
+			          <cameraName>camera_ir</cameraName>
+			          <imageTopicName>/camera/color/image_raw</imageTopicName>
+			          <cameraInfoTopicName>/camera/color/camera_info</cameraInfoTopicName>
+			          <depthImageTopicName>/camera/depth/image_raw</depthImageTopicName>
+			          <depthImageCameraInfoTopicName>/camera/depth/camera_info</depthImageCameraInfoTopicName>
+			          <pointCloudTopicName>/camera/depth/points</pointCloudTopicName>
+			          <frameName>camera_link</frameName>
+			          <pointCloudCutoff>0.5</pointCloudCutoff>
+			          <pointCloudCutoffMax>100.0</pointCloudCutoffMax>
+			          <distortionK1>0</distortionK1>
+			          <distortionK2>0</distortionK2>
+			          <distortionK3>0</distortionK3>
+			          <distortionT1>0</distortionT1>
+			          <distortionT2>0</distortionT2>
+			          <CxPrime>0</CxPrime>
+			          <Cx>0</Cx>
+			          <Cy>0</Cy>
+			          <focalLength>0</focalLength>
+			          <hackBaseline>0</hackBaseline>
+			        </plugin>
 			
-					<plugin name='camera_control' filename='libgazebo_ros_camera.so'>
+					<!-- <plugin name='camera_control' filename='libgazebo_ros_camera.so'>
 						<alwaysOn>true</alwaysOn>
 						<updateRate>0</updateRate>
 						<cameraName>camera</cameraName>
 						<imageTopicName>image</imageTopicName>
 						<cameraInfoTopicName>camera_info</cameraInfoTopicName>
 						<frameName>overhead_cam_frame</frameName>
-					</plugin>
+					</plugin> -->
 					<always_on>1</always_on>
 					<update_rate>30</update_rate>
 					<visualize>1</visualize>
@@ -88,13 +113,13 @@
 	    </physics>
 
 	    <plugin name="particle_shooter_plugin" filename="libparticle_shooter_plugin.so">
-	      <reset_frequency>1.0</reset_frequency>
+	      <reset_frequency>0.0</reset_frequency>
 	      <x_axis_force>0.0</x_axis_force>
-	      <y_axis_force>-500.0</y_axis_force>
+	      <y_axis_force>0.0</y_axis_force>
 	      <z_axis_force>0.0</z_axis_force>
 	      
-	      <x_origin>40.0</x_origin>
-	      <y_origin>50.0</y_origin>
+	      <x_origin>0.0</x_origin>
+	      <y_origin>0.0</y_origin>
 	      <z_origin>20.0</z_origin>
 	      
 	      <random_range>0.5</random_range>
