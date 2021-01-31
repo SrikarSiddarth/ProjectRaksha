@@ -13,7 +13,7 @@
 	    <include>
 	      <uri>model://particle_sphere</uri>
 	      <name>particle_sphere1</name>
-	      <pose>0 0 0 0 0 0</pose>
+	      <pose>5 0 20 0 0 0</pose>
 	    </include>
 
 		<include>
@@ -29,7 +29,7 @@
 			<static>1</static>
 		    <!-- camera -->
  			<link name='camera_link'>
-				<pose>-10 0 15 0 -0.2 0</pose>
+				<pose>-10 0 15 0 0 0</pose>
 				<inertial>
 					<mass>0.1</mass>
 					<inertia>
@@ -112,7 +112,7 @@
 	      <real_time_update_rate>1000</real_time_update_rate>
 	    </physics>
 
-	    <plugin name="particle_shooter_plugin" filename="libparticle_shooter_plugin.so">
+	   <!--  <plugin name="particle_shooter_plugin" filename="libparticle_shooter_plugin.so">
 	      <reset_frequency>0.0</reset_frequency>
 	      <x_axis_force>0.0</x_axis_force>
 	      <y_axis_force>0.0</y_axis_force>
@@ -120,11 +120,11 @@
 	      
 	      <x_origin>0.0</x_origin>
 	      <y_origin>0.0</y_origin>
-	      <z_origin>20.0</z_origin>
+	      <z_origin>0.0</z_origin>
 	      
 	      <random_range>0.5</random_range>
 	      
-	    </plugin>
+	    </plugin> -->
     
 	</world>
 </sdf>

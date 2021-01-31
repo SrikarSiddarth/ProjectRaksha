@@ -2,35 +2,96 @@
 
 import rospy
 from std_msgs.msg import Float64
+from geometry_msgs.msg import Point
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge, CvBridgeError
 import numpy as np
+import cv2 as cv
 
 class Turret():
 	""" defining a class for turret"""
 	def __init__(self):
+		print('eem')
 		# this subscriber gets the image from gazebo camera
-		sub = rospy.Subscriber('/camera/image',Image,self.image_callback)
+		sub = rospy.Subscriber('/camera/color/image_raw',Image,self.image_callback)
+		sub1 = rospy.Subscriber('depthSensor/points',Point,self.threeD_cb)
 		# the following lines initializes the publishers which control the angle of the servo motors.
 		self.pub_x = rospy.Publisher('/laser_turret/servo_x_controller/command',Float64,queue_size=10)
 		self.pub_y = rospy.Publisher('/laser_turret/servo_y_controller/command',Float64,queue_size=10)
-		self.x = 0
-		self.y = 0
+		self.pubxy = rospy.Publisher('xyPoint',Point,queue_size=10)
+		self.x = -1		
+		self.y = 1
 		self.img = None
+		self.hsv = None
 		self.bridge = CvBridge()
+		self.p = Point()
+		self.threeD = [0,0,0]
+		# self.fgbg = cv.bgsegm.createBackgroundSubtractorMOG()
+
+	def threeD_cb(self, msg):
+		self.threeD[0] = msg.x
+		self.threeD[1] = msg.y
+		self.threeD[2] = msg.z
+		# print('3D points :')
+		# print(self.threeD)
 
 	def image_callback(self,data):
 		try:
+			# print('om')
 			self.img = self.bridge.imgmsg_to_cv2(data, "bgr8")
 
 			# you may perform image processing like scaling, blurring etc here...
 
-			# self.img = self.img[120:950, 300:1075]
-			# height = 720
-			# width = 720
-			# dim = (height, width)
-			# self.res = cv2.resize(self.img, dim, interpolation = cv2.INTER_LINEAR)					#resizing the image to 720 by 720 pixels
-			# self.hsv = cv2.cvtColor(self.res, cv2.COLOR_BGR2HSV)
+			# lower_red = np.array([165,155,95])
+			# upper_red = np.array([180,255,255])
+			self.hsv = cv.cvtColor(self.img, cv.COLOR_BGR2HSV)
+			# mask = cv.inRange(hsv, lower_red, upper_red)
+			# res = cv.bitwise_and(self.img,self.img, mask= mask)
+
+			lower_red_1 = np.array([0, 100, 100])
+			upper_red_1 = np.array([10, 255, 255])
+			mask_red_1 = cv.inRange(self.hsv, lower_red_1, upper_red_1)
+			lower_red_2 = np.array([160, 100, 100])
+			upper_red_2 = np.array([179, 255, 255])
+			mask_red_2 = cv.inRange(self.hsv, lower_red_2, upper_red_2)
+			mask_red = cv.addWeighted(mask_red_1, 1, mask_red_2, 1, 0)
+
+			# gray = cv.cvtColor(mask_red, cv.COLOR_BGR2GRAY)
+			# blur = cv.GaussianBlur(gray,(5,5),0)
+			# _ , thresh = cv.threshold(blur,20,255,cv.THRESH_BINARY)
+			# dilated = cv.dilate(thresh,None,iterations = 3)
+			_,contours, _ = cv.findContours(mask_red, cv.RETR_TREE,cv.CHAIN_APPROX_SIMPLE)
+			# (x,y,w,h) = (0,0,0,0)
+			cArea = 0
+			index = 0
+			for i in range(len(contours)):
+				# print(cv.contourArea(count),len(contours))
+				c = cv.contourArea(contours[i])
+				if c>cArea:
+					cArea = c
+					index = i
+			(x,y,w,h) = cv.boundingRect(contours[index])
+			x2 = x + int(w/2)
+			y2 = y + int(h/2)
+			cv.circle(self.img,(x2,y2),4,(0,255,0),-1)
+			text = "x: " + str(x2) + ", y: " + str(y2)
+			cv.putText(self.img, text, (x2 - 10, y2 - 10),cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+			
+				
+			# fgmask = self.fgbg.apply(mask_red)
+			# x2 = x + int(w/2)
+			# y2 = y + int(h/2)
+			# cv.circle(self.img,(x2,y2),4,(0,255,0),-1)
+			# text = "x: " + str(x2) + ", y: " + str(y2)
+			# cv.putText(self.img, text, (x2 - 10, y2 - 10),cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+			self.img = cv.resize(self.img, (540,480), interpolation = cv.INTER_LINEAR)
+			cv.imshow('self.img',self.img)
+			# cv.imshow('FG',fgmask)
+			cv.waitKey(33)
+			self.p.x = x2
+			self.p.y = y2
+			self.pubxy.publish(self.p)
+			# print(x2, y2)
 		except CvBridgeError as e:
  			print(e)
 
@@ -45,7 +106,7 @@ if __name__ == '__main__':
 	rospy.init_node('turret')
 	rate = rospy.Rate(30)	# while loop running at 30 Hz
 	T = Turret()
-	while not rospy.is_shutdown:	
+	while not rospy.is_shutdown():	
 		T.position()
 		rate.sleep()
 
